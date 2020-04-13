@@ -31,7 +31,7 @@ LD_INCS =
 __VERSION_STR__ := $(shell git rev-parse --abbrev-ref HEAD):$(shell git rev-parse --short HEAD)
 
 # Global definitions
-DEFS = 
+DEFS = -D__VERSION_STR__=$(__VERSION_STR__)
 
 # External Library path
 LIB_PATH = -L$(BuildPath)/kylink -L$(BuildPath)/sdk
