@@ -6,27 +6,18 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ./apps/main.c \
-./apps/adis.c \
 ./apps/terminal.c \
-./apps/uart.c \
-./apps/kysocket.c \
-./apps/estimator.c
+./apps/kysocket.c
 
 OBJS += \
 $(BuildPath)/apps/main.o \
-$(BuildPath)/apps/adis.o \
 $(BuildPath)/apps/terminal.o \
-$(BuildPath)/apps/uart.o \
-$(BuildPath)/apps/kysocket.o \
-$(BuildPath)/apps/estimator.o
+$(BuildPath)/apps/kysocket.o
 
 C_DEPS += \
 $(BuildPath)/apps/main.d \
-$(BuildPath)/apps/adis.d \
 $(BuildPath)/apps/terminal.d \
-$(BuildPath)/apps/uart.d \
-$(BuildPath)/apps/kysocket.d \
-$(BuildPath)/apps/estimator.d
+$(BuildPath)/apps/kysocket.d
 
 OBJ_DIRS = $(sort $(dir $(OBJS)))
 

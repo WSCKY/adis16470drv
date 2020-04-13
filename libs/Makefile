@@ -21,23 +21,27 @@ PLATFORM =
 
 # Include Dirs
 INCS = -I$(TopPath)/apps \
+       -I$(TopPath)/adis \
        -I$(TopPath)/kylink \
        -I$(TopPath)/configs
 
 LD_INCS = 
 
+# get version from git
+__VERSION_STR__ := $(shell git rev-parse --abbrev-ref HEAD):$(shell git rev-parse --short HEAD)
+
 # Global definitions
 DEFS = 
 
 # External Library path
-LIB_PATH = -L$(BuildPath)/kylink
+LIB_PATH = -L$(BuildPath)/kylink -L$(BuildPath)/sdk
 
 # External Libraries
-LIBS := -lpthread -lkylink
+LIBS := -lpthread -lkylink -lADIS16470DRV
 
 # Other configuration
-CFGS = 
-LD_CFGS = 
+CFGS = -c -fPIC
+LD_CFGS = -Wl,--hash-style=sysv,-Bsymbolic,-rpath=$(BuildPath)/sdk
 
 ifeq ($(D), 1)
 # Debug information
@@ -86,6 +90,7 @@ export OBJCOPY
 export OBJDUMP
 export MKDIR
 export ECHO
+export MAKE
 # -Variables
 export INCS
 export DBGS
@@ -96,10 +101,10 @@ export TopPath
 
 # All Target
 all: $(ProjName) | $(BuildPath)
+sdk: libraries
 
 # All of the sources participating in the build are defined here
 -include apps/subdir.mk
-#-include rtu/subdir.mk
 
 # Add inputs and outputs from these tool invocations to the build variables 
 
@@ -127,6 +132,7 @@ clean:
 
 libraries:
 	$(MAKE) -C kylink/ BUILD=$(BuildPath)/kylink
+	$(MAKE) -C adis/ BUILD=$(BuildPath)/sdk
 
 .PHONY: all clean
 .SECONDARY: libraries
