@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet file="ADIS.pdesc" type="text/xsl"?>
+
+<Packages MaxSize="80Bytes">
+  <!--Package type catalog-->
+  <fType name="ADIS IMU Data" id="0x19">
+    <member type="float">gx</member>
+    <member type="float">gy</member>
+    <member type="float">gz</member>
+    <member type="float">ax</member>
+    <member type="float">ay</member>
+    <member type="float">az</member>
+    <member type="float">temp</member>
+    <member type="float">cntr</member>
+    <member type="float">chksum</member>
+  </fType>
+    <fType name="ATT_QUAT" id="0x12">
+    <member type="float">qw</member>
+    <member type="float">qx</member>
+    <member type="float">qy</member>
+    <member type="float">qz</member>
+  </fType>
+  <fType name="ATT_EULER" id="0x18">
+    <member type="float">pitch</member>
+    <member type="float">roll</member>
+    <member type="float">yaw</member>
+  </fType>
+</Packages>
