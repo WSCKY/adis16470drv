@@ -62,6 +62,8 @@ int main(int argc, char *argv[]) {
     goto exit;
   }
 
+  printf("sdk version: %s\n", adis16470_sdk_version());
+
   ch = adis16470_start(dev);
   if(ch < 0) {
     printf("\e[0;31mfailed to start adis16470 driver %d.\e[0m\n", ch);
