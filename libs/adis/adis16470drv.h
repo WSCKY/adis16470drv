@@ -40,6 +40,13 @@ typedef struct {
 int adis16470_start(const char *dev);
 
 /*
+ * @brief  get SDK version string.
+ * @param  none
+ * @retval version string.
+ */
+const char *adis16470_sdk_version(void);
+
+/*
  * @brief  read temperature form sensor.
  * @param  <float *>: pointer to a float number to hold temperature data.
  * @retval 0 always.

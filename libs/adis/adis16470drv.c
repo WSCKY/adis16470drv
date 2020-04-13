@@ -19,6 +19,9 @@
 #include <pthread.h>
 #include <sys/time.h>
 
+#define STR1(R) #R
+#define STR2(R) STR1(R)
+
 static pthread_t est_thread;
 static pthread_t cal_thread;
 
@@ -58,6 +61,11 @@ int adis16470_start(const char *dev)
     return -3;
   }
   return 0;
+}
+
+const char *adis16470_sdk_version(void)
+{
+  return "kyChu ADIS16470 SDK"" <"STR2(__VERSION_STR__)">" "@<"__DATE__ " " __TIME__ ">";
 }
 
 int adis16470_stop(void)
