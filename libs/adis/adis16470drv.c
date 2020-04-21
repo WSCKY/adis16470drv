@@ -56,6 +56,7 @@ int adis16470_start(const char *dev)
   }
   uart_flush_read();
   uart_flush_write();
+  printf("sdk version: %s\n", adis16470_sdk_version());
   if(pthread_create(&est_thread, NULL, (void *)adis_imu_est_task, NULL) != 0) {
     printf("\e[0;31mfailed to start estimate task.\e[0m\n");
     return -3;
@@ -177,6 +178,8 @@ static void adis_imu_cal_task(void)
   }
 }
 
+#define ADIS_IMU_CHECKSUM_ERROR_MAX    (20)
+
 static void adis_imu_est_task(void)
 {
   uint8_t test_cmd[28];
@@ -185,6 +188,14 @@ static void adis_imu_est_task(void)
   uint16_t current_cnt = 0, last_cnt = 0;
   float delta_ts_ms = 0;
   uint8_t checksum = 0;
+
+  uint32_t checksum_error_cnt = 0;
+
+  adis_write_register(0x68, 0x0080);
+  usleep(200000); // delay 200ms
+  adis_write_register(0x68, 0x0000);
+  usleep(200000); // wait 200ms for reset down.
+  printf("auto reset before start.\n");
 
   _calibrate_flag = true;
   if(pthread_create(&cal_thread, NULL, (void *)adis_imu_cal_task, NULL) != 0) {
@@ -235,6 +246,7 @@ static void adis_imu_est_task(void)
         checksum += *(rx_cache + 3 + i);
       }
       if(checksum == rx_cache[22]) {
+        checksum_error_cnt = 0;
         if(delta_ts_ms != 0) {
           pthread_mutex_lock(&imu_6dof_mtx);
           pthread_mutex_lock(&est_q_mtx);
@@ -244,6 +256,18 @@ static void adis_imu_est_task(void)
           Quat2Euler(&est_q, &est_e);
           pthread_mutex_unlock(&est_q_mtx);
           pthread_mutex_unlock(&est_e_mtx);
+        }
+      } else {
+        if(checksum_error_cnt < ADIS_IMU_CHECKSUM_ERROR_MAX)
+          checksum_error_cnt ++;
+        else {
+          printf("\e[0;31mADIS16470 IMU breakdown!!! <Continuous %d error data> autoreset now !!!\e[0m\n", checksum_error_cnt);
+          checksum_error_cnt = 0;
+          adis_write_register(0x68, 0x0080);
+          usleep(200000); // delay 200ms
+          adis_write_register(0x68, 0x0000);
+          usleep(200000); // wait 200ms for reset down.
+          printf("auto reset done.\n");
         }
       }
     }
