@@ -20,6 +20,7 @@ extern "C" {
 typedef struct {
   float gx, gy, gz; // (deg/s)
   float ax, ay, az; // (m/s^2)
+  unsigned long int timestamp; // (0.5ms)
 } imu_6dof_t;
 
 /* quaternion */

@@ -56,6 +56,7 @@ int adis16470_start(const char *dev)
   }
   uart_flush_read();
   uart_flush_write();
+  memset(&imu_6dof, 0, sizeof(imu_6dof_t));
   printf("sdk version: %s\n", adis16470_sdk_version());
   if(pthread_create(&est_thread, NULL, (void *)adis_imu_est_task, NULL) != 0) {
     printf("\e[0;31mfailed to start estimate task.\e[0m\n");
@@ -235,10 +236,13 @@ static void adis_imu_est_task(void)
       imu_temp = adis_combine_word(rx_cache + 17) * 0.1f;
       current_cnt = adis_conbine_uword(rx_cache + 19);
 
-      if(current_cnt < last_cnt)
+      if(current_cnt < last_cnt) {
         delta_ts_ms = (0x10000 - last_cnt + current_cnt) * 0.5f;
-      else
+        imu_6dof.timestamp += 0x10000 - last_cnt + current_cnt;
+      } else {
         delta_ts_ms = (current_cnt - last_cnt) * 0.5f;//adis_conbine_uword(rx_cache + 19);
+        imu_6dof.timestamp += current_cnt - last_cnt;
+      }
       last_cnt = current_cnt;
 
       checksum = 0;
